@@ -4,6 +4,7 @@ from datetime import date
 import logging
 import random
 from typing import Dict, Optional, Type
+from faker import Faker
 
 from models import Heroe, Personaje, Villano, Miembro, Jugador, CuerpoTecnico
 
@@ -20,6 +21,7 @@ class Gestion:
 
         self.plantilla = {}
         self._siguiente_id_miembro = 1
+        self.faker = Faker("es_ES")
 
     def agregar_miembro(self, tipo, nombre, apellidos, dato):
         try:
@@ -81,6 +83,41 @@ class Gestion:
 
         with open("plantilla.sql", "a", encoding="utf-8") as archivo:
             archivo.write(sentencia)
+
+    def generar_plantilla(self):
+        if self.plantilla:
+            print("La plantilla ya contiene miembros")
+            return
+
+        posiciones= {
+            "Portero": 2,
+            "Defensa": 8,
+            "Centrocampista": 8,
+            "Delantero": 5
+        }
+
+        roles = {
+            "Entrenador": 1,
+            "Preparador físico": 1,
+            "Utilleros": 3
+        }
+
+        for posicion, cantidad in posiciones.items():
+            for i in range(cantidad):
+                nombre = self.faker.first_name()
+                apellidos = self.faker.last_name() + " " + self.faker.last_name()
+                self.agregar_miembro("jugador", nombre, apellidos, posicion)
+        for rol, cantidad in roles.items():
+            for i in range(cantidad):
+                nombre = self.faker.first_name()
+                apellidos = self.faker.last_name() + " " + self.faker.last_name()
+                self.agregar_miembro("tecnico", nombre, apellidos, rol)
+
+        logger.info("Plantilla generada automáticamente con 28 miembros")
+
+
+
+
 
     def _obtener_diccionario(self, tipo: str):
         tipo = tipo.strip().lower()
