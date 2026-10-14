@@ -5,7 +5,7 @@ import logging
 import random
 from typing import Dict, Optional, Type
 
-from models import Heroe, Personaje, Villano
+from models import Heroe, Personaje, Villano, Miembro, Jugador, CuerpoTecnico
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +17,61 @@ class Gestion:
         self.heroes: Dict[int, Heroe] = {}
         self.villanos: Dict[int, Villano] = {}
         self._siguiente_id = 1
+
+        self.plantilla = {}
+        self._siguiente_id_miembro = 1
+
+    def agregar_miembro(self, tipo, nombre, apellidos, dato):
+        try:
+            identificador = self._siguiente_id_miembro
+
+            if tipo == "jugador":
+                miembro = Jugador(identificador, nombre, apellidos, dato)
+            elif tipo == "tecnico":
+                miembro = CuerpoTecnico(identificador, nombre, apellidos, dato)
+            else:
+                raise ValueError("Tipo de miembro no válido.")
+
+            self.guardar_miembro(miembro)
+
+            self.plantilla[identificador] = miembro
+            self._siguiente_id_miembro += 1
+
+            logger.info(
+                "Creado %s id=%s nombre=%s %s",
+                tipo, identificador, nombre, apellidos
+            )
+
+            return miembro
+
+        except Exception:
+            logger.exception("Error al agregar miembro.")
+            raise
+
+    def guardar_miembro(self, miembro):
+        nombre = miembro.nombre.replace("'", "''")
+        apellidos = miembro.apellidos.replace("'", "''")
+
+        if isinstance(miembro, Jugador):
+            posicion = miembro.posicion.replace("'", "''")
+
+            sentencia = (
+                f"INSERT INTO jugador (id, nombre, apellidos, posicion) "
+                f"VALUES ({miembro.identificador}, '{nombre}', "
+                f"'{apellidos}', '{posicion}');\n"
+            )
+
+        elif isinstance(miembro, CuerpoTecnico):
+            rol = miembro.rol.replace("'", "''")
+
+            sentencia = (
+                f"INSERT INTO miembro (id, nombre, apellidos, rol) "
+                f"VALUES ({miembro.identificador}, '{nombre}', "
+                f"'{apellidos}', '{rol}');\n"
+            )
+
+        with open("plantilla.sql", "a", encoding="utf-8") as archivo:
+            archivo.write(sentencia)
 
     def _obtener_diccionario(self, tipo: str):
         tipo = tipo.strip().lower()
