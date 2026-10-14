@@ -48,6 +48,15 @@ class Gestion:
             logger.exception("Error al agregar miembro.")
             raise
 
+    def listar_plantilla(self):
+        try:
+            miembros = list(self.plantilla.values())
+            logger.info("Listado de plantilla solicitado. Cantidad=%s", len(miembros))
+            return miembros
+        except Exception:
+            logger.exception("Error al listar plantilla.")
+            raise
+
     def guardar_miembro(self, miembro):
         nombre = miembro.nombre.replace("'", "''")
         apellidos = miembro.apellidos.replace("'", "''")

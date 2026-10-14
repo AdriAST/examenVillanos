@@ -2,6 +2,7 @@
 
 import logging
 from gestion import Gestion
+from models import Jugador, CuerpoTecnico
 
 logger = logging.getLogger(__name__)
 
@@ -90,7 +91,7 @@ class Menu:
                 self.agregar_miembro()
 
             elif opcion == "2":
-                print("Listar plantilla")
+                self.listar_plantilla()
 
             elif opcion == "3":
                 print("Crear plantilla")
@@ -172,3 +173,28 @@ class Menu:
         miembro = self.gestion.agregar_miembro(tipo, nombre, apellidos, valor)
 
         print(f"Miembro agregado correctamente con ID: {miembro.identificador}")
+
+    def listar_plantilla(self):
+        miembros = self.gestion.listar_plantilla()
+
+        if not miembros:
+            print("No hay miembros en la plantilla.")
+            return
+
+        print("\n========== PLANTILLA DE FÚTBOL ==========")
+
+        for miembro in miembros:
+            print(f"ID: {miembro.identificador}")
+            print(f"Nombre: {miembro.nombre}")
+            print(f"Apellidos: {miembro.apellidos}")
+
+            if isinstance(miembro, Jugador):
+                print("Tipo: Jugador")
+                print(f"Posición: {miembro.posicion}")
+
+            elif isinstance(miembro, CuerpoTecnico):
+                print("Tipo: Cuerpo técnico")
+                print(f"Rol: {miembro.rol}")
+
+
+
