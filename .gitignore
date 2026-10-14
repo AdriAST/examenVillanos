@@ -1,0 +1,20 @@
+# Entornos virtuales
+.venv/
+venv/
+
+# Archivos temporales de Python
+__pycache__/
+*.py[cod]
+
+# Configuración local de editores e IDE
+.idea/
+.vscode/
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Entornos y salidas generadas
+.env
+site/
+logs/
